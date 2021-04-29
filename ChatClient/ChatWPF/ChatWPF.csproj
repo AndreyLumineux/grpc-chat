@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
-    <Folder Include="Views\" />
+    <PackageReference Include="FluentWPF" Version="0.9.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
   </ItemGroup>
 
 </Project>
