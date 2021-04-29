@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option csharp_namespace = "ChatProtos";
+
+package gateway;
+
+import "google/protobuf/empty.proto";
+
+service Gateway {	
+	rpc InvokeAction (ClientRequest) returns (google.protobuf.Empty);
+	rpc SendMessage (SendMessageRequest) returns (google.protobuf.Empty);
+}
+
+message ClientRequest {
+	string name = 1;
+	string action = 2;
+}
+
+message SendMessageRequest {
+	string name = 1;
+	string message = 2;
+}

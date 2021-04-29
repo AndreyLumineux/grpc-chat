@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option csharp_namespace = "ChatProtos";
+
+package connection;
+
+import "google/protobuf/empty.proto";
+
+service Connection {	
+	rpc Connect (GatewayRequest) returns (GatewayResponse);
+	rpc Disconnect (GatewayRequest) returns (GatewayResponse);
+	rpc GetAllClients (google.protobuf.Empty) returns (GetAllClientsResponse);
+}
+
+message GatewayRequest {
+	string name = 1;
+}
+
+message GatewayResponse {
+	string name = 1;
+	Status status = 2;
+	
+	enum Status {
+		SUCCESS = 0;
+		ERROR = 1;
+	}
+}
+
+message GetAllClientsResponse {
+	repeated string clients = 1;
+}
