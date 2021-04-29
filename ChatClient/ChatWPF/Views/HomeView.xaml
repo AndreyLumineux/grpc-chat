@@ -1,0 +1,32 @@
+﻿<Window x:Class="ChatWPF.Views.HomeView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ChatWPF.ViewModels"
+        mc:Ignorable="d"
+        Title="HomeView" Height="300" Width="500">
+
+    <Window.DataContext>
+        <local:HomeVM/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <local:HomeVM x:Key="HomeVM"/>
+    </Window.Resources>
+
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="{Binding StatusLabel.Message}"
+                   Foreground="{Binding StatusLabel.ForegroundColor}" 
+                   HorizontalAlignment="Center" 
+                   FontWeight="Bold" 
+                   Margin="0,10"/>
+        <TextBox Text="{Binding ClientName}" 
+                 TextAlignment="Center"
+                 MaxLength="15" Width="100" Margin="0,30"/>
+        <Button Content="Join chat" 
+                Command="{Binding JoinPressed}" 
+                Background="Gray" Foreground="Azure" 
+                Width="100" Margin="0,10"/>
+    </StackPanel>
+</Window>
