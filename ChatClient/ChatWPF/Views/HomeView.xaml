@@ -16,8 +16,17 @@
     </Window.Resources>
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock Text="{Binding StatusLabel.Message}" HorizontalAlignment="Center" FontWeight="Bold" Margin="0,10"/>
-        <TextBox Text="John Doe" TextAlignment="Center" MaxLength="15" Width="100" Margin="0,30"/>
-        <Button Content="Join chat" Background="Gray" Foreground="Azure" Width="100" Margin="0,10"/>
+        <TextBlock Text="{Binding StatusLabel.Message}"
+                   Foreground="{Binding StatusLabel.ForegroundColor}" 
+                   HorizontalAlignment="Center" 
+                   FontWeight="Bold" 
+                   Margin="0,10"/>
+        <TextBox Text="{Binding ClientName}" 
+                 TextAlignment="Center"
+                 MaxLength="15" Width="100" Margin="0,30"/>
+        <Button Content="Join chat" 
+                Command="{Binding JoinPressed}" 
+                Background="Gray" Foreground="Azure" 
+                Width="100" Margin="0,10"/>
     </StackPanel>
 </Window>

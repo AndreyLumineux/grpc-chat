@@ -34,5 +34,16 @@ namespace ChatWPF.Models
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        private System.Windows.Media.Brush _foregroundColor = System.Windows.Media.Brushes.Black;
+        public System.Windows.Media.Brush ForegroundColor
+        {
+            get { return _foregroundColor; }
+            set
+            {
+                _foregroundColor = value;
+                NotifyPropertyChanged("ForegroundColor");
+            }
+        }
     }
 }
