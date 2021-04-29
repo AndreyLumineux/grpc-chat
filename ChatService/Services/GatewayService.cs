@@ -34,5 +34,14 @@ namespace ChatService
 
             return Task.FromResult(new Empty());
         }
+
+        public override async Task SendMessage(IAsyncStreamReader<ClientToServerMessage> requestStream, IServerStreamWriter<ServerToClientMessage> responseStream, ServerCallContext context)
+        {
+            while (await requestStream.MoveNext())
+            {
+                var message = requestStream.Current;
+                Console.WriteLine($"{message.Name}: {message.Text}");
+            }
+        }
     }
 }
