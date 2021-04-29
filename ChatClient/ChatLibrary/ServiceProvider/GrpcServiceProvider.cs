@@ -12,7 +12,7 @@ namespace ChatLibrary.ServiceProvider
     {
         private string Url { get; set; }
         private Lazy<GrpcChannel> RpcChannel { get; set; }
-        private Chat.ChatClient ChatClient { get; set; }
+        private Gateway.GatewayClient GatewayClient { get; set; }
 
         public GrpcServiceProvider()
         {
@@ -20,6 +20,6 @@ namespace ChatLibrary.ServiceProvider
             this.RpcChannel = new Lazy<GrpcChannel>(GrpcChannel.ForAddress(this.Url));
         }
 
-        public Chat.ChatClient GetChatClient() => this.ChatClient ??= new Chat.ChatClient(this.RpcChannel.Value);
+        public Gateway.GatewayClient GetGatewayClient() => this.GatewayClient ??= new Gateway.GatewayClient(this.RpcChannel.Value);
     }
 }

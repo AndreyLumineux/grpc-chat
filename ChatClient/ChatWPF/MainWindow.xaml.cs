@@ -34,13 +34,9 @@ namespace ChatWPF
 
         private async Task CallGrpcService()
         {
-            var client = new GrpcServiceProvider().GetChatClient();
-            var reply = await client.SendMessageAsync(
-                new SendRequest()
-                {
-                    Name = "george",
-                    Message = "test"
-                });
+            var client = new GrpcServiceProvider().GetGatewayClient();
+
+            await client.SendMessage().RequestStream.WriteAsync(new ClientToServerMessage() { Name = "george", Text = "test" });
         }
     }
 }
