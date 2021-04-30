@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using ChatWPF.Services;
 using ChatWPF.ViewModels;
 
 namespace ChatWPF
@@ -14,5 +15,10 @@ namespace ChatWPF
     /// </summary>
     public partial class App : Application
     {
+        private void App_OnExit(object sender, ExitEventArgs e)
+        {
+            Operations operations = new Operations(null);
+            operations.Close();
+        }
     }
 }

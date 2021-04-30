@@ -14,7 +14,7 @@ using Grpc.Core;
 
 namespace ChatWPF.Services
 {
-    class Operations
+    public class Operations
     {
         private NavigationStore _navigationStore;
 
@@ -44,26 +44,28 @@ namespace ChatWPF.Services
             }
 
             HomeVM.StatusLabel.Message = "Joining ...";
-            HomeVM.StatusLabel.ForegroundColor = System.Windows.Media.Brushes.ForestGreen;
+            HomeVM.StatusLabel.ForegroundColor = System.Windows.Media.Brushes.OliveDrab;
             await Task.Delay(500);
-            var response = CallGrpcService();
+            var response = CallGrpcService("connect");
             if (response.Result.Status != ClientResponse.Types.Status.Success)
             {
                 HomeVM.StatusLabel.Message = "Something went wrong while trying to connect to the server :(";
                 HomeVM.StatusLabel.ForegroundColor = System.Windows.Media.Brushes.Red;
+                return;
             }
 
             _navigationStore.CurrentVM = new ChatVM();
+
         }
 
-        private Task<ClientResponse> CallGrpcService()
+        private Task<ClientResponse> CallGrpcService(string action)
         {
             var client = new GrpcServiceProvider().GetGatewayClient();
             ClientResponse result;
             try
             {
                 result = client.InvokeAction(
-                    new ClientRequest { Name = HomeVM.ClientName, Action = "connect" },
+                    new ClientRequest { Name = HomeVM.ClientName, Action = action },
                     new CallOptions(deadline: DateTime.UtcNow.AddSeconds(2)));
             }
             catch
@@ -72,6 +74,11 @@ namespace ChatWPF.Services
             }
 
             return Task.FromResult(result);
+        }
+
+        public void Close()
+        {
+            var response = CallGrpcService("disconnect");
         }
     }
 

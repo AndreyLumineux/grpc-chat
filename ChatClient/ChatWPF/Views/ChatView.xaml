@@ -4,9 +4,37 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChatWPF.Views"
+        xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+        xmlns:viewModels="clr-namespace:ChatWPF.ViewModels"
+        fw:AcrylicWindow.Enabled="True"
+        fw:AcrylicWindow.AcrylicWindowStyle="NoIcon"
+        fw:AcrylicWindow.TintColor="LightBlue"
+        fw:AcrylicWindow.FallbackColor="LightBlue"
         mc:Ignorable="d"
         Height="450" Width="800">
-    <Grid>
 
+    <UserControl.DataContext>
+        <viewModels:ChatVM/>
+    </UserControl.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid fw:PointerTracker.Enabled="True" Background="LightGray">
+            <ListBox ItemsSource="{Binding List.Clients}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding }"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+
+        <Grid Grid.Column="1" Background="White">
+
+        </Grid>
     </Grid>
 </UserControl>
