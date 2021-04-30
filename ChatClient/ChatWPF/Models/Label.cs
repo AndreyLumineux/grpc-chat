@@ -19,7 +19,7 @@ namespace ChatWPF.Models
             set
             {
                 message = value;
-                NotifyPropertyChanged("Message");
+                OnPropertyChanged("Message");
             }
         }
 
@@ -29,7 +29,7 @@ namespace ChatWPF.Models
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void NotifyPropertyChanged(string propertyName)
+        protected void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
@@ -42,7 +42,7 @@ namespace ChatWPF.Models
             set
             {
                 _foregroundColor = value;
-                NotifyPropertyChanged("ForegroundColor");
+                OnPropertyChanged("ForegroundColor");
             }
         }
     }

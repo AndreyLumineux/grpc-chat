@@ -12,16 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ChatWPF.Views
+namespace ChatWPF
 {
     /// <summary>
-    /// Interaction logic for HomeView.xaml
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class HomeView : UserControl
+    public partial class MainWindow : Window
     {
-        public HomeView()
+        public MainWindow()
         {
-            InitializeComponent();
         }
     }
 }
