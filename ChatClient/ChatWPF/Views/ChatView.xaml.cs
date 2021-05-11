@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace ChatWPF.Views
 {
     /// <summary>
-    /// Interaction logic for HomeView.xaml
+    /// Interaction logic for ChatView.xaml
     /// </summary>
-    public partial class HomeView : UserControl
+    public partial class ChatView : UserControl
     {
-        public HomeView()
+        public ChatView()
         {
             InitializeComponent();
         }
