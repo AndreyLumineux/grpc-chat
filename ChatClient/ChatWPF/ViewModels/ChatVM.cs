@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ChatWPF.Models;
+using ChatWPF.Services;
 
 namespace ChatWPF.ViewModels
 {
@@ -13,8 +14,14 @@ namespace ChatWPF.ViewModels
 
         public ChatVM()
         {
+            var operations = new Operations(MainVM._navigationStore);
+            var clientsList = operations.GetAllClients();
+
             List = new ClientsList();
-            List.AddClient(HomeVM.ClientName);
+            foreach (var item in clientsList)
+            {
+                List.AddClient(item);
+            }
         }
     }
 }

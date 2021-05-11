@@ -9,7 +9,6 @@ import "google/protobuf/empty.proto";
 service Connection {	
 	rpc Connect (GatewayRequest) returns (GatewayResponse);
 	rpc Disconnect (GatewayRequest) returns (GatewayResponse);
-	rpc GetAllClients (google.protobuf.Empty) returns (GetAllClientsResponse);
 }
 
 message GatewayRequest {
@@ -24,8 +23,4 @@ message GatewayResponse {
 		SUCCESS = 0;
 		ERROR = 1;
 	}
-}
-
-message GetAllClientsResponse {
-	repeated string clients = 1;
 }

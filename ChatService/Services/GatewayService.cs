@@ -20,6 +20,8 @@ namespace ChatService
 
         private readonly ConnectionService connectionService = new();
 
+        public static List<string> ClientsList { get; set; } = new();
+
         public override Task<ClientResponse> InvokeAction(ClientRequest request, ServerCallContext context)
         {
             ClientResponse clientResponse = new ClientResponse()
@@ -30,12 +32,20 @@ namespace ChatService
             switch (request.Action)
             {
                 case "connect":
+                    if (ClientsList.Contains(request.Name))
+                    {
+                        //TODO: use logger
+                        Console.WriteLine("A user with this name is already connected.");
+                        break;
+                    }
                     connectionService.Connect(new GatewayRequest { Name = request.Name }, context);
                     clientResponse.Status = ClientResponse.Types.Status.Success;
+                    ClientsList.Add(request.Name);
                     break;
                 case "disconnect":
                     connectionService.Disconnect(new GatewayRequest { Name = request.Name }, context);
                     clientResponse.Status = ClientResponse.Types.Status.Success;
+                    ClientsList.Remove(request.Name);
                     break;
             }
 
@@ -49,6 +59,16 @@ namespace ChatService
                 var message = requestStream.Current;
                 Console.WriteLine($"{message.Name}: {message.Text}");
             }
+        }
+
+        public override Task<GetAllClientsResponse> GetAllClients(Empty request, ServerCallContext context)
+        {
+            var clients = ClientsList;
+
+            var response = new GetAllClientsResponse();
+            response.Clients.AddRange(clients);
+
+            return Task.FromResult(response);
         }
     }
 }
