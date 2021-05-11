@@ -80,6 +80,14 @@ namespace ChatWPF.Services
         {
             var response = CallGrpcService("disconnect");
         }
+
+        public IList<string> GetAllClients()
+        {
+            var client = new GrpcServiceProvider().GetGatewayClient();
+
+            var result = client.GetAllClients(new Empty());
+            return result.Clients == null ? new List<string>() : result.Clients;
+        }
     }
 
 

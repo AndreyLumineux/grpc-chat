@@ -18,22 +18,30 @@
     </UserControl.DataContext>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid fw:PointerTracker.Enabled="True" Background="LightGray">
+        <Grid Grid.Row="0" Grid.Column="0" fw:PointerTracker.Enabled="True" Background="DarkGray">
+            <TextBlock Text="Users" VerticalAlignment="Center" FontStyle="Italic" FontSize="13" Margin="8,0"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.Column="0" fw:PointerTracker.Enabled="True" Background="LightGray">
             <ListBox ItemsSource="{Binding List.Clients}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding }"/>
+                        <TextBlock Text="{Binding}"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
 
-        <Grid Grid.Column="1" Background="White">
+        <Grid Grid.Row="1" Grid.Column="1" Background="White">
 
         </Grid>
     </Grid>

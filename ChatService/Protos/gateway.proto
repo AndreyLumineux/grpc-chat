@@ -9,6 +9,7 @@ import "google/protobuf/empty.proto";
 service Gateway {	
 	rpc InvokeAction (ClientRequest) returns (ClientResponse);
 	rpc SendMessage (stream ClientToServerMessage) returns (stream ServerToClientMessage);
+	rpc GetAllClients (google.protobuf.Empty) returns (GetAllClientsResponse);
 }
 
 message ClientRequest {
@@ -33,4 +34,8 @@ message ClientToServerMessage {
 message ServerToClientMessage {
 	string name = 1;
 	string text = 2;
+}
+
+message GetAllClientsResponse {
+	repeated string clients = 1;
 }
