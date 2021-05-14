@@ -15,7 +15,7 @@ namespace ChatWPF.Commands
         public RelayCommand(Action<object> commandTask)
         {
             this.commandTask = commandTask ?? throw new ArgumentNullException(nameof(commandTask));
-            this.canExecuteTask = (object x) => true;
+            canExecuteTask = (object x) => true;
         }
 
         public RelayCommand(Action<object> commandTask, Predicate<object> canExecuteTask)

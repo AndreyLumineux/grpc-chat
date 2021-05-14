@@ -1,0 +1,19 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "ChatProtos";
+
+package message;
+
+service Message {
+    rpc SendMessage (stream ClientToServerMessage) returns (stream ServerToClientMessage);
+}
+
+message ClientToServerMessage {
+    string name = 1;
+    string text = 2;
+}
+
+message ServerToClientMessage {
+    string name = 1;
+    string text = 2;
+}
