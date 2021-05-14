@@ -6,9 +6,8 @@ package gateway;
 
 import "google/protobuf/empty.proto";
 
-service Gateway {	
+service Gateway {
 	rpc InvokeAction (ClientRequest) returns (ClientResponse);
-	rpc SendMessage (stream ClientToServerMessage) returns (stream ServerToClientMessage);
 	rpc GetAllClients (google.protobuf.Empty) returns (GetAllClientsResponse);
 }
 
@@ -24,16 +23,6 @@ message ClientResponse {
 		SUCCESS = 0;
 		ERROR = 1;
 	}
-}
-
-message ClientToServerMessage {
-	string name = 1;
-	string text = 2;
-}
-
-message ServerToClientMessage {
-	string name = 1;
-	string text = 2;
 }
 
 message GetAllClientsResponse {
