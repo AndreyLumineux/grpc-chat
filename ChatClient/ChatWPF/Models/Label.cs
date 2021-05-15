@@ -9,23 +9,23 @@ namespace ChatWPF.Models
 {
     public class Label : INotifyPropertyChanged
     {
-        private string message;
-        public string Message
+        private string _labelMessage;
+        public string LabelMessage
         {
             get
             {
-                return message;
+                return _labelMessage;
             }
             set
             {
-                message = value;
-                OnPropertyChanged("Message");
+                _labelMessage = value;
+                OnPropertyChanged("LabelMessage");
             }
         }
 
-        public Label(string message)
+        public Label(string labelMessage)
         {
-            Message = message;
+            LabelMessage = labelMessage;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

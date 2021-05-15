@@ -27,11 +27,11 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" Grid.Column="0" fw:PointerTracker.Enabled="True" Background="DarkGray">
+        <Grid Grid.Row="0" Grid.Column="0" fw:PointerTracker.Enabled="True" Background="DarkSalmon">
             <TextBlock Text="Users" VerticalAlignment="Center" FontStyle="Italic" FontSize="13" Margin="8,0"/>
         </Grid>
 
-        <Grid Grid.Row="1" Grid.Column="0" fw:PointerTracker.Enabled="True" Background="LightGray">
+        <Grid Grid.Row="1" Grid.Column="0" fw:PointerTracker.Enabled="True" Background="AntiqueWhite">
             <ListBox ItemsSource="{Binding List.Clients}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -42,7 +42,14 @@
         </Grid>
 
         <Grid Grid.Row="1" Grid.Column="1" Background="White">
-
+            <StackPanel Orientation="Vertical"  VerticalAlignment="Bottom">
+                <!--TODO: bind a list of messages here-->
+                <!--<ItemsControl></ItemsControl>-->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0, 10">
+                    <Button Content="Send" Background="AntiqueWhite" Height="30" Margin="10,0" Command="{Binding SendPressed}"/>
+                    <TextBox Width="550" Height="30" Text="{Binding InputBox.InputMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>
