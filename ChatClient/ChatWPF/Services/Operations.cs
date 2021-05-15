@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Documents;
-using System.Windows.Navigation;
 using ChatLibrary.ServiceProvider;
 using ChatProtos;
 using ChatWPF.Stores;
@@ -59,17 +55,21 @@ namespace ChatWPF.Services
 			_navigationStore.CurrentVM = new ChatVM();
 			Console.WriteLine("Successfully connected to server.");
 
+			var messageClient = new GrpcServiceProvider().GetMessageClient();
+			await ListenToServer(messageClient);
 
-			// TODO: Send messages to server from GUI
-			await SendMessageToServer();
 
-			// TODO: Get asynchronous updates from server
-			ListenToServer();
+			// // TODO: Get asynchronous updates from server
+			// var listenToServerTask = ListenToServer(messageClient);
+			//
+			// // TODO: Send messages to server from GUI
+			// var sendMessageToServerTask = SendMessageToServer(messageClient);
+			//
+			// await Task.WhenAll(sendMessageToServerTask, listenToServerTask);
 		}
 
-		private static async Task SendMessageToServer()
+		private static async Task SendMessageToServer(Message.MessageClient messageClient)
 		{
-			var messageClient = new GrpcServiceProvider().GetMessageClient();
 			var line = Console.ReadLine();
 
 			while (!string.Equals(line, "qw!", StringComparison.OrdinalIgnoreCase))
@@ -84,20 +84,15 @@ namespace ChatWPF.Services
 			}
 
 			await messageClient.SendMessage().RequestStream.CompleteAsync();
+			Console.WriteLine("Sent message.");
 		}
 
-		private static void ListenToServer()
+		private static async Task ListenToServer(Message.MessageClient messageClient)
 		{
-			var messageClient = new GrpcServiceProvider().GetMessageClient();
-
-			var result = Task.Run(async () =>
+			await foreach (var response in messageClient.SendMessage().ResponseStream.ReadAllAsync())
 			{
-				while (await messageClient.SendMessage().ResponseStream.MoveNext())
-				{
-					var msg = messageClient.SendMessage().ResponseStream.Current;
-					Console.WriteLine($"Received: {msg.Name} -- {msg.Text}");
-				}
-			});
+				Console.WriteLine($"Received: {response.Name} -- {response.Text}");
+			}
 		}
 
 		private Task<ClientResponse> CallGrpcService(string action)
