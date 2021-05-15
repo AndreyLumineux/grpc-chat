@@ -27,11 +27,15 @@ namespace ChatService.Services
 
 		private static async Task ServerToClientMessage(IServerStreamWriter<ServerToClientMessage> responseStream, ServerCallContext context)
 		{
+			var pingCount = 0;
+
 			while (!context.CancellationToken.IsCancellationRequested)
 			{
+				await Task.Delay(500);
+
 				await responseStream.WriteAsync(new ServerToClientMessage
 				{
-					Name = "TestName",
+					Name = pingCount++.ToString(),
 					Text = "TestText"
 				});
 			}
