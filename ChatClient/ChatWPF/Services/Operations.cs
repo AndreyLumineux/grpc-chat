@@ -57,7 +57,8 @@ namespace ChatWPF.Services
 			Console.WriteLine("Successfully connected to server.");
 
 			messageClient = GrpcServiceProvider.Instance.MessageClient;
-			await ListenToServer(messageClient);
+			
+			await ListenToServer();
 		}
 
 		public async Task Send(string line)
@@ -79,11 +80,21 @@ namespace ChatWPF.Services
 			Console.WriteLine("Sent message.");
 		}
 
-		private static async Task ListenToServer(Message.MessageClient messageClient)
+		private async Task ListenToServer()
 		{
 			await foreach (var response in messageClient.SendMessage().ResponseStream.ReadAllAsync())
 			{
 				Console.WriteLine($"Received: {response.Name} -- {response.Text}");
+
+				try
+				{
+					((ChatVM) _navigationStore.CurrentVM).AddMessage($"Received: {response.Name} -- {response.Text}");
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+					// TODO: Exception handling
+				}
 			}
 		}
 
