@@ -24,7 +24,6 @@ namespace ChatWPF.Models
         public Message(string message)
         {
             string msg = " ";
-            string finalMessage = "";
 
             for (int i = 0; i < message.Length; i++)
             {
@@ -41,16 +40,16 @@ namespace ChatWPF.Models
                     }
                     if (beginingFound)
                     {
-                        string auxMessage = " <Bold>";
+                        string auxMessage = "<Bold>";
                         bool endingFound = false;
                         for (int j = i + 1; j < message.Length; j++)
                         {
-                            if (message[j] == '*' && j == message.Length - 1)
+                            if (message[j] == '*' && j == message.Length - 1 && !endingFound)
                             {
                                 auxMessage = auxMessage + "</Bold>";
                                 endingFound = true;
                             }
-                            else if (message[j] == '*' && message[j + 1] == ' ')
+                            else if (message[j] == '*' && message[j + 1] == ' ' && !endingFound)
                             {
                                 auxMessage = auxMessage + "</Bold>";
                                 endingFound = true;
@@ -80,16 +79,16 @@ namespace ChatWPF.Models
                     }
                     if (beginingFound)
                     {
-                        string auxMessage = " <Italic>";
+                        string auxMessage = "<Italic>";
                         bool endingFound = false;
                         for (int j = i + 1; j < message.Length; j++)
                         {
-                            if (message[j] == '_' && j == message.Length - 1)
+                            if (message[j] == '_' && j == message.Length - 1 && !endingFound)
                             {
                                 auxMessage = auxMessage + "</Italic>";
                                 endingFound = true;
                             }
-                            else if (message[j] == '_' && message[j + 1] == ' ')
+                            else if (message[j] == '_' && message[j + 1] == ' ' && !endingFound)
                             {
                                 auxMessage = auxMessage + "</Italic>";
                                 endingFound = true;
@@ -119,16 +118,16 @@ namespace ChatWPF.Models
                     }
                     if (beginingFound)
                     {
-                        string auxMessage = " <Strikethrough";
+                        string auxMessage = "<Strikethrough>";
                         bool endingFound = false;
                         for (int j = i + 1; j < message.Length; j++)
                         {
-                            if (message[j] == '~' && j == message.Length - 1)
+                            if (message[j] == '~' && j == message.Length - 1 && !endingFound)
                             {
                                 auxMessage = auxMessage + "</Strikethrough>";
                                 endingFound = true;
                             }
-                            else if (message[j] == '~' && message[j + 1] == ' ')
+                            else if (message[j] == '~' && message[j + 1] == ' ' && !endingFound)
                             {
                                 auxMessage = auxMessage + "</Strikethrough>";
                                 endingFound = true;
@@ -158,16 +157,16 @@ namespace ChatWPF.Models
                     }
                     if (beginingFound)
                     {
-                        string auxMessage = " <Underline>";
+                        string auxMessage = "<Underline>";
                         bool endingFound = false;
                         for (int j = i + 1; j < message.Length; j++)
                         {
-                            if (message[j] == '`' && j == message.Length - 1)
+                            if (message[j] == '`' && j == message.Length - 1 && !endingFound)
                             {
                                 auxMessage = auxMessage + "</Underline>";
                                 endingFound = true;
                             }
-                            else if (message[j] == '`' && message[j + 1] == ' ')
+                            else if (message[j] == '`' && message[j + 1] == ' ' && !endingFound)
                             {
                                 auxMessage = auxMessage + "</Underline>";
                                 endingFound = true;
@@ -181,20 +180,16 @@ namespace ChatWPF.Models
                             message = msg + auxMessage;
                         else
                             msg = msg + message[i];
-
                     }
-
-
                 }
                 else
                 {
+                    i = msg.Length - 1;
                     msg = msg + message[i];
                 }
             }
 
-
-            finalMessage = "<TextBlock>" + msg + "</TextBlock>";
-            _outputMessage = finalMessage;
+            _outputMessage = msg;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
