@@ -37,7 +37,7 @@ namespace ChatWPF.ViewModels
                 if (_sendPressed == null)
                 {
                     var operations = new Operations(MainVM._navigationStore);
-                    _sendPressed = new RelayCommand(param => operations.Send(InputBox.InputMessage));
+                    _sendPressed = new RelayCommand(async param => await operations.Send(InputBox.InputMessage));
                 }
                 return _sendPressed;
             }
