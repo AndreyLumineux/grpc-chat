@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ChatProtos;
 using Grpc.Core;
@@ -9,7 +10,7 @@ namespace ChatService.Services
 {
 	public class MessageService : Message.MessageBase
 	{
-		private readonly List<IServerStreamWriter<ServerToClientMessage>> responseStreams = new();
+		private static readonly List<IServerStreamWriter<ServerToClientMessage>> ResponseStreams = new();
 		private readonly ILogger<MessageService> _logger;
 
 		public MessageService(ILogger<MessageService> logger)
@@ -20,9 +21,9 @@ namespace ChatService.Services
 		public override async Task SendMessage(IAsyncStreamReader<ClientToServerMessage> requestStream,
 			IServerStreamWriter<ServerToClientMessage> responseStream, ServerCallContext context)
 		{
-			if (!responseStreams.Contains(responseStream))
+			if (!ResponseStreams.Contains(responseStream))
 			{
-				responseStreams.Add(responseStream);
+				ResponseStreams.Add(responseStream);
 			}
 
 			await ServerReceivedMessage(requestStream, context);
@@ -45,9 +46,17 @@ namespace ChatService.Services
 				var message = requestStream.Current;
 				Console.WriteLine($"Received: {message.Name}: {message.Text}");
 
-				foreach (var responseStream in responseStreams)
+				foreach (var responseStream in ResponseStreams.ToList())
 				{
-					await ServerSendMessage(responseStream, context, message.Name, message.Text);
+					try
+					{
+						await ServerSendMessage(responseStream, context, message.Name, message.Text);
+					}
+					catch (Exception)
+					{
+						ResponseStreams.Remove(responseStream);
+						Console.WriteLine(" ***** Removed a response stream. *****");
+					}
 				}
 			}
 		}

@@ -13,7 +13,7 @@ namespace ChatWPF.Services
 	public class Operations
 	{
 		private NavigationStore _navigationStore;
-		private static Message.MessageClient _messageClient;
+		private static Message.MessageClient messageClient;
 
 		public Operations(NavigationStore navigationStore)
 		{
@@ -56,8 +56,8 @@ namespace ChatWPF.Services
 			_navigationStore.CurrentVM = new ChatVM();
 			Console.WriteLine("Successfully connected to server.");
 
-			_messageClient = GrpcServiceProvider.Instance.MessageClient;
-			await ListenToServer(_messageClient);
+			messageClient = GrpcServiceProvider.Instance.MessageClient;
+			await ListenToServer(messageClient);
 		}
 
 		public async Task Send(string line)
@@ -67,7 +67,7 @@ namespace ChatWPF.Services
 
 		private static async Task SendMessageToServer(string text)
 		{
-			await _messageClient.SendMessage()
+			await messageClient.SendMessage()
 				.RequestStream.WriteAsync(new ClientToServerMessage()
 				{
 					Name = HomeVM.ClientName,
@@ -75,7 +75,7 @@ namespace ChatWPF.Services
 				});
 
 
-			await _messageClient.SendMessage().RequestStream.CompleteAsync();
+			// await _messageClient.SendMessage().RequestStream.CompleteAsync();
 			Console.WriteLine("Sent message.");
 		}
 
