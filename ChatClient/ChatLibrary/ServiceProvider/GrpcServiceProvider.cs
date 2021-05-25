@@ -6,11 +6,11 @@ namespace ChatLibrary.ServiceProvider
 {
 	public class GrpcServiceProvider
 	{
-		private static readonly GrpcServiceProvider instance;
+		private static GrpcServiceProvider instance;
 		private Gateway.GatewayClient gatewayClient;
 		private Message.MessageClient messageClient;
 
-		public static GrpcServiceProvider Instance => instance ?? new GrpcServiceProvider();
+		public static GrpcServiceProvider Instance => instance ??= new GrpcServiceProvider();
 
 		private string Url { get; set; }
 		private Lazy<GrpcChannel> RpcChannel { get; set; }

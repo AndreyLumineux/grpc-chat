@@ -14,7 +14,11 @@ namespace ChatWPF.Services
 	{
 		private NavigationStore _navigationStore;
 		private static Message.MessageClient messageClient;
+		private static Gateway.GatewayClient gatewayClient;
 
+		private IAsyncStreamReader<ServerToClientMessage> messagesResponseStream;
+		private IAsyncStreamReader<GetClientsUpdateResponse> clientsUpdatesResponseStream;
+		
 		public Operations(NavigationStore navigationStore)
 		{
 			_navigationStore = navigationStore;
@@ -57,8 +61,12 @@ namespace ChatWPF.Services
 			Console.WriteLine("Successfully connected to server.");
 
 			messageClient = GrpcServiceProvider.Instance.MessageClient;
+			gatewayClient = GrpcServiceProvider.Instance.GatewayClient;
 			
-			await ListenToServer();
+			clientsUpdatesResponseStream = gatewayClient.GetClientsUpdates(new Empty()).ResponseStream;
+			messagesResponseStream = messageClient.SendMessage().ResponseStream;
+
+			await Task.WhenAll(ListenToMessages(), ListenToClientsUpdates());
 		}
 
 		public async Task Send(string line)
@@ -69,20 +77,18 @@ namespace ChatWPF.Services
 		private static async Task SendMessageToServer(string text)
 		{
 			await messageClient.SendMessage()
-				.RequestStream.WriteAsync(new ClientToServerMessage()
+				.RequestStream.WriteAsync(new ClientToServerMessage
 				{
 					Name = HomeVM.ClientName,
 					Text = text
 				});
 
-
-			// await _messageClient.SendMessage().RequestStream.CompleteAsync();
 			Console.WriteLine("Sent message.");
 		}
 
-		private async Task ListenToServer()
+		private async Task ListenToMessages()
 		{
-			await foreach (var response in messageClient.SendMessage().ResponseStream.ReadAllAsync())
+			await foreach (var response in messagesResponseStream.ReadAllAsync())
 			{
 				Console.WriteLine($"Received: {response.Name} -- {response.Text}");
 
@@ -94,6 +100,23 @@ namespace ChatWPF.Services
 				{
 					Console.WriteLine(e);
 					// TODO: Exception handling
+				}
+			}
+		}
+
+		private async Task ListenToClientsUpdates()
+		{
+			await foreach (var response in clientsUpdatesResponseStream.ReadAllAsync())
+			{
+				if (response.Status == GetClientsUpdateResponse.Types.Status.Connected)
+				{
+					Console.WriteLine($"{response.Client} has connected.");
+					((ChatVM) _navigationStore.CurrentVM).Clients.AddClient(response.Client);
+				}
+				else
+				{
+					Console.WriteLine($"{response.Client} has disconnected.");
+					((ChatVM) _navigationStore.CurrentVM).Clients.RemoveClient(response.Client);
 				}
 			}
 		}
@@ -110,7 +133,7 @@ namespace ChatWPF.Services
 			}
 			catch
 			{
-				return Task.FromResult(new ClientResponse() {Status = ClientResponse.Types.Status.Error});
+				return Task.FromResult(new ClientResponse {Status = ClientResponse.Types.Status.Error});
 			}
 
 			return Task.FromResult(result);
@@ -126,7 +149,7 @@ namespace ChatWPF.Services
 			var client = GrpcServiceProvider.Instance.GatewayClient;
 
 			var result = client.GetAllClients(new Empty());
-			return result.Clients == null ? new List<string>() : result.Clients;
+			return (IList<string>) result.Clients ?? new List<string>();
 		}
 	}
 }

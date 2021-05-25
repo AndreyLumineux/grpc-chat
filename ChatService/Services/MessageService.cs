@@ -10,7 +10,7 @@ namespace ChatService.Services
 {
 	public class MessageService : Message.MessageBase
 	{
-		private static readonly List<IServerStreamWriter<ServerToClientMessage>> ResponseStreams = new();
+		private static readonly List<IServerStreamWriter<ServerToClientMessage>> MessagesResponseStreams = new();
 		private readonly ILogger<MessageService> _logger;
 
 		public MessageService(ILogger<MessageService> logger)
@@ -21,9 +21,9 @@ namespace ChatService.Services
 		public override async Task SendMessage(IAsyncStreamReader<ClientToServerMessage> requestStream,
 			IServerStreamWriter<ServerToClientMessage> responseStream, ServerCallContext context)
 		{
-			if (!ResponseStreams.Contains(responseStream))
+			if (!MessagesResponseStreams.Contains(responseStream))
 			{
-				ResponseStreams.Add(responseStream);
+				MessagesResponseStreams.Add(responseStream);
 			}
 
 			await ServerReceivedMessage(requestStream, context);
@@ -46,7 +46,7 @@ namespace ChatService.Services
 				var message = requestStream.Current;
 				Console.WriteLine($"Received: {message.Name}: {message.Text}");
 
-				foreach (var responseStream in ResponseStreams.ToList())
+				foreach (var responseStream in MessagesResponseStreams.ToList())
 				{
 					try
 					{
@@ -54,7 +54,7 @@ namespace ChatService.Services
 					}
 					catch (Exception)
 					{
-						ResponseStreams.Remove(responseStream);
+						MessagesResponseStreams.Remove(responseStream);
 						Console.WriteLine(" ***** Removed a response stream. *****");
 					}
 				}
