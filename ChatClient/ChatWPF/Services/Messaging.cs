@@ -1,7 +1,8 @@
-﻿namespace ChatWPF.Services
+﻿using ChatWPF.ViewModels;
+
+namespace ChatWPF.Services
 {
-	public class Messaging
-	{
-		
-	}
+    public static class Messaging
+    {
+    }
 }

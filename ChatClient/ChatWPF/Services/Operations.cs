@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
 using ChatLibrary.ServiceProvider;
@@ -14,15 +15,17 @@ namespace ChatWPF.Services
 {
     public class Operations
     {
-        private NavigationStore _navigationStore;
+        private readonly NavigationStore _navigationStore;
+        private BaseVM _currentContext;
         private static Message.MessageClient messageClient;
         private static Gateway.GatewayClient gatewayClient;
 
         private IAsyncStreamReader<ServerToClientMessage> messagesResponseStream;
         private IAsyncStreamReader<GetClientsUpdateResponse> clientsUpdatesResponseStream;
 
-        public Operations(NavigationStore navigationStore)
+        public Operations(BaseVM currentContext, NavigationStore navigationStore)
         {
+            _currentContext = currentContext;
             _navigationStore = navigationStore;
         }
 
@@ -59,7 +62,8 @@ namespace ChatWPF.Services
                 return;
             }
 
-            _navigationStore.CurrentVM = new ChatVM();
+            _currentContext = new ChatVM();
+            _navigationStore.CurrentVM = _currentContext;
             Console.WriteLine("Successfully connected to server.");
 
             messageClient = GrpcServiceProvider.Instance.MessageClient;
@@ -76,6 +80,13 @@ namespace ChatWPF.Services
             await SendMessageToServer(line);
         }
 
+
+        public void SendVoid(object obj)
+        {
+            (_currentContext as ChatVM).Messages.Add("gfdahadfh");
+        }
+
+
         private static async Task SendMessageToServer(string text)
         {
             await messageClient.SendMessage()
@@ -90,12 +101,13 @@ namespace ChatWPF.Services
 
         private async Task ListenToMessages()
         {
+            var currentContext = _currentContext as ChatVM;
             await foreach (var response in messagesResponseStream.ReadAllAsync())
             {
                 Console.WriteLine($"Received: {response.Name} -- {response.Text}");
                 try
                 {
-                    ((ChatVM)_navigationStore.CurrentVM).Messages.Add($"Received: {response.Name} -- {response.Text}");
+                    currentContext.Messages.Add($"Received: {response.Name} -- {response.Text}");
                 }
                 catch (Exception e)
                 {
