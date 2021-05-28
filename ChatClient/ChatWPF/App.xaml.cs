@@ -5,15 +5,14 @@ using ChatWPF.ViewModels;
 
 namespace ChatWPF
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
-    {
-        private void App_OnExit(object sender, ExitEventArgs e)
-        {
-            Operations operations = new Operations(null, null);
-            operations.Close();
-        }
-    }
+	/// <summary>
+	/// Interaction logic for App.xaml
+	/// </summary>
+	public partial class App : Application
+	{
+		private void App_OnExit(object sender, ExitEventArgs e)
+		{
+			Operations.Instance.Close();
+		}
+	}
 }
