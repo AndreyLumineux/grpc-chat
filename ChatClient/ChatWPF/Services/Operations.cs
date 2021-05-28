@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Threading;
 using ChatLibrary.ServiceProvider;
 using ChatProtos;
 using ChatWPF.Stores;
@@ -12,11 +15,17 @@ namespace ChatWPF.Services
 {
     public class Operations
     {
-        private NavigationStore _navigationStore;
-        private static Message.MessageClient _messageClient;
+        private readonly NavigationStore _navigationStore;
+        private BaseVM _currentContext;
+        private static Message.MessageClient messageClient;
+        private static Gateway.GatewayClient gatewayClient;
 
-        public Operations(NavigationStore navigationStore)
+        private IAsyncStreamReader<ServerToClientMessage> messagesResponseStream;
+        private IAsyncStreamReader<GetClientsUpdateResponse> clientsUpdatesResponseStream;
+
+        public Operations(BaseVM currentContext, NavigationStore navigationStore)
         {
+            _currentContext = currentContext;
             _navigationStore = navigationStore;
         }
 
@@ -53,55 +62,81 @@ namespace ChatWPF.Services
                 return;
             }
 
-            _navigationStore.CurrentVM = new ChatVM();
+            _currentContext = new ChatVM();
+            _navigationStore.CurrentVM = _currentContext;
             Console.WriteLine("Successfully connected to server.");
 
-            _messageClient = new GrpcServiceProvider().GetMessageClient();
-            await ListenToServer(_messageClient);
+            messageClient = GrpcServiceProvider.Instance.MessageClient;
+            gatewayClient = GrpcServiceProvider.Instance.GatewayClient;
 
+            clientsUpdatesResponseStream = gatewayClient.GetClientsUpdates(new Empty()).ResponseStream;
+            messagesResponseStream = messageClient.SendMessage().ResponseStream;
 
-            // // TODO: Get asynchronous updates from server
-            // var listenToServerTask = ListenToServer(messageClient);
-            //
-            // // TODO: Send messages to server from GUI
-            // var sendMessageToServerTask = SendMessageToServer(messageClient);
-            //
-            // await Task.WhenAll(sendMessageToServerTask, listenToServerTask);
+            await Task.WhenAll(ListenToMessages(), ListenToClientsUpdates());
         }
 
-        public void Send(string line)
+        public async Task Send(string line)
         {
-            SendMessageToServer(line);
+            await SendMessageToServer(line);
         }
 
-        private static async Task SendMessageToServer(string line)
-        {
-            while (!string.Equals(line, "qw!", StringComparison.OrdinalIgnoreCase))
-            {
-                await _messageClient.SendMessage()
-                    .RequestStream.WriteAsync(new ClientToServerMessage()
-                    {
-                        Name = HomeVM.ClientName,
-                        Text = line
-                    });
-                line = Console.ReadLine();
-            }
 
-            await _messageClient.SendMessage().RequestStream.CompleteAsync();
+        public void SendVoid(object obj)
+        {
+            (_currentContext as ChatVM).Messages.Add("gfdahadfh");
+        }
+
+
+        private static async Task SendMessageToServer(string text)
+        {
+            await messageClient.SendMessage()
+                .RequestStream.WriteAsync(new ClientToServerMessage
+                {
+                    Name = HomeVM.ClientName,
+                    Text = text
+                });
+
             Console.WriteLine("Sent message.");
         }
 
-        private static async Task ListenToServer(Message.MessageClient messageClient)
+        private async Task ListenToMessages()
         {
-            await foreach (var response in messageClient.SendMessage().ResponseStream.ReadAllAsync())
+            var currentContext = _currentContext as ChatVM;
+            await foreach (var response in messagesResponseStream.ReadAllAsync())
             {
                 Console.WriteLine($"Received: {response.Name} -- {response.Text}");
+                try
+                {
+                    currentContext.Messages.Add($"Received: {response.Name} -- {response.Text}");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    // TODO: Exception handling
+                }
+            }
+        }
+
+        private async Task ListenToClientsUpdates()
+        {
+            await foreach (var response in clientsUpdatesResponseStream.ReadAllAsync())
+            {
+                if (response.Status == GetClientsUpdateResponse.Types.Status.Connected)
+                {
+                    Console.WriteLine($"{response.Client} has connected.");
+                    ((ChatVM)_navigationStore.CurrentVM).Clients.AddClient(response.Client);
+                }
+                else
+                {
+                    Console.WriteLine($"{response.Client} has disconnected.");
+                    ((ChatVM)_navigationStore.CurrentVM).Clients.RemoveClient(response.Client);
+                }
             }
         }
 
         private Task<ClientResponse> CallGrpcService(string action)
         {
-            var client = new GrpcServiceProvider().GetGatewayClient();
+            var client = GrpcServiceProvider.Instance.GatewayClient;
             ClientResponse result;
 
             try
@@ -111,7 +146,7 @@ namespace ChatWPF.Services
             }
             catch
             {
-                return Task.FromResult(new ClientResponse() { Status = ClientResponse.Types.Status.Error });
+                return Task.FromResult(new ClientResponse { Status = ClientResponse.Types.Status.Error });
             }
 
             return Task.FromResult(result);
@@ -124,10 +159,10 @@ namespace ChatWPF.Services
 
         public IList<string> GetAllClients()
         {
-            var client = new GrpcServiceProvider().GetGatewayClient();
+            var client = GrpcServiceProvider.Instance.GatewayClient;
 
             var result = client.GetAllClients(new Empty());
-            return result.Clients == null ? new List<string>() : result.Clients;
+            return (IList<string>)result.Clients ?? new List<string>();
         }
     }
 }

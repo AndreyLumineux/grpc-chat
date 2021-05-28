@@ -7,24 +7,35 @@ package gateway;
 import "google/protobuf/empty.proto";
 
 service Gateway {
-	rpc InvokeAction (ClientRequest) returns (ClientResponse);
-	rpc GetAllClients (google.protobuf.Empty) returns (GetAllClientsResponse);
+    rpc InvokeAction (ClientRequest) returns (ClientResponse);
+    rpc GetAllClients (google.protobuf.Empty) returns (GetAllClientsResponse);
+    rpc GetClientsUpdates (google.protobuf.Empty) returns (stream GetClientsUpdateResponse);
 }
 
 message ClientRequest {
-	string name = 1;
-	string action = 2;
+    string name = 1;
+    string action = 2;
 }
 
 message ClientResponse {
-	Status status = 1;
+    Status status = 1;
 
-	enum Status {
-		SUCCESS = 0;
-		ERROR = 1;
-	}
+    enum Status {
+        SUCCESS = 0;
+        ERROR = 1;
+    }
 }
 
 message GetAllClientsResponse {
-	repeated string clients = 1;
+    repeated string clients = 1;
+}
+
+message GetClientsUpdateResponse {
+    Status status = 1;
+    string client = 2;
+
+    enum Status {
+        CONNECTED = 0;
+        DISCONNECTED = 1;
+    }
 }

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using ChatWPF.Commands;
 using ChatWPF.Models;
 using ChatWPF.Services;
-using ChatWPF.Stores;
 
 namespace ChatWPF.ViewModels
 {
@@ -29,7 +23,7 @@ namespace ChatWPF.ViewModels
             {
                 if (_joinPressed == null)
                 {
-                    var operations = new Operations(MainVM._navigationStore);
+                    var operations = new Operations(this, MainVM._navigationStore);
                     _joinPressed = new RelayCommand(operations.Submit);
                 }
                 return _joinPressed;

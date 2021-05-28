@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using ChatWPF.Services;
+using ChatWPF.Stores;
 using ChatWPF.ViewModels;
 
 namespace ChatWPF
@@ -17,7 +12,7 @@ namespace ChatWPF
     {
         private void App_OnExit(object sender, ExitEventArgs e)
         {
-            Operations operations = new Operations(null);
+            Operations operations = new Operations(null, null);
             operations.Close();
         }
     }

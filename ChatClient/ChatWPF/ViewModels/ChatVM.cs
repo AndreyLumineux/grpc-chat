@@ -1,32 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 using ChatWPF.Commands;
 using ChatWPF.Models;
 using ChatWPF.Services;
+using Meziantou.Framework.WPF.Collections;
 
 namespace ChatWPF.ViewModels
 {
     public class ChatVM : BaseVM
     {
-        public ClientsList List { get; set; }
+        private readonly Operations _operations;
+        private readonly object _lock = new();
+
+        public ObservableCollection<string> Messages { get; } = new();
+
+        public ClientsList Clients { get; set; }
         public Input InputBox { get; set; }
 
         public ChatVM()
         {
-            var operations = new Operations(MainVM._navigationStore);
-            var clientsList = operations.GetAllClients();
+            _operations = new Operations(this, MainVM._navigationStore);
+            var clientsList = _operations.GetAllClients();
 
-            List = new ClientsList();
+            Clients = new ClientsList();
             foreach (var item in clientsList)
             {
-                List.AddClient(item);
+                Clients.AddClient(item);
             }
 
             InputBox = new Input();
+            Messages.Add("Yest");
         }
 
         private ICommand _sendPressed;
@@ -36,10 +45,22 @@ namespace ChatWPF.ViewModels
             {
                 if (_sendPressed == null)
                 {
-                    var operations = new Operations(MainVM._navigationStore);
-                    _sendPressed = new RelayCommand(param => operations.Send(InputBox.InputMessage));
+                    _sendPressed = new RelayCommand(async param => await _operations.Send(InputBox.InputMessage));
                 }
                 return _sendPressed;
+            }
+        }
+
+        private ICommand _sendVoid;
+        public ICommand SendVoid
+        {
+            get
+            {
+                if (_sendVoid == null)
+                {
+                    _sendVoid = new RelayCommand(_operations.SendVoid);
+                }
+                return _sendVoid;
             }
         }
     }

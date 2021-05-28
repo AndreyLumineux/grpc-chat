@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using ChatWPF.Stores;
+﻿using ChatWPF.Stores;
 
 namespace ChatWPF.ViewModels
 {
