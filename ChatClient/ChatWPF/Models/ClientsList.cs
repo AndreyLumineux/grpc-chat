@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace ChatWPF.Models
 {
 	public class ClientsList : INotifyPropertyChanged
 	{
-		public List<string> Clients { get; set; }
+		public ObservableCollection<string> Clients { get; set; }
 
 		public ClientsList()
 		{
-			Clients = new List<string>();
+			Clients = new ObservableCollection<string>();
 		}
 
 		public void AddClient(string client)

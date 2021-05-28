@@ -88,7 +88,7 @@
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
                     <Button Content="Send" Background="#ffd2bd" Height="30" Margin="10,0" Command="{Binding SendPressed}" />
                     <TextBox Width="550" Height="30" Background="#ffdfbd" Padding="10,7,0,0"
-					         Text="{Binding InputBox.InputMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                             Text="{Binding InputBox.InputMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
             </StackPanel>
         </Grid>

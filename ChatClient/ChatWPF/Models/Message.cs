@@ -18,13 +18,13 @@ namespace ChatWPF.Models
 
         public Message(string message)
         {
-            string msg = " ";
+            var msg = " ";
 
-            for (int i = 0; i < message.Length; i++)
+            for (var i = 0; i < message.Length; i++)
             {
                 if (message[i] == '*')
                 {
-                    bool beginingFound = false;
+                    var beginingFound = false;
                     if (i == 0)
                     {
                         beginingFound = true;
@@ -35,9 +35,9 @@ namespace ChatWPF.Models
                     }
                     if (beginingFound)
                     {
-                        string auxMessage = "<Bold>";
-                        bool endingFound = false;
-                        for (int j = i + 1; j < message.Length; j++)
+                        var auxMessage = "<Bold>";
+                        var endingFound = false;
+                        for (var j = i + 1; j < message.Length; j++)
                         {
                             if (message[j] == '*' && j == message.Length - 1 && !endingFound)
                             {
@@ -63,7 +63,7 @@ namespace ChatWPF.Models
                 }
                 else if (message[i] == '_')
                 {
-                    bool beginingFound = false;
+                    var beginingFound = false;
                     if (i == 0)
                     {
                         beginingFound = true;
@@ -74,9 +74,9 @@ namespace ChatWPF.Models
                     }
                     if (beginingFound)
                     {
-                        string auxMessage = "<Italic>";
-                        bool endingFound = false;
-                        for (int j = i + 1; j < message.Length; j++)
+                        var auxMessage = "<Italic>";
+                        var endingFound = false;
+                        for (var j = i + 1; j < message.Length; j++)
                         {
                             if (message[j] == '_' && j == message.Length - 1 && !endingFound)
                             {
@@ -102,7 +102,7 @@ namespace ChatWPF.Models
                 }
                 else if (message[i] == '~')
                 {
-                    bool beginingFound = false;
+                    var beginingFound = false;
                     if (i == 0)
                     {
                         beginingFound = true;
@@ -113,9 +113,9 @@ namespace ChatWPF.Models
                     }
                     if (beginingFound)
                     {
-                        string auxMessage = "<Strikethrough>";
-                        bool endingFound = false;
-                        for (int j = i + 1; j < message.Length; j++)
+                        var auxMessage = "<Strikethrough>";
+                        var endingFound = false;
+                        for (var j = i + 1; j < message.Length; j++)
                         {
                             if (message[j] == '~' && j == message.Length - 1 && !endingFound)
                             {
@@ -141,7 +141,7 @@ namespace ChatWPF.Models
                 }
                 else if (message[i] == '`')
                 {
-                    bool beginingFound = false;
+                    var beginingFound = false;
                     if (i == 0)
                     {
                         beginingFound = true;
@@ -152,9 +152,9 @@ namespace ChatWPF.Models
                     }
                     if (beginingFound)
                     {
-                        string auxMessage = "<Underline>";
-                        bool endingFound = false;
-                        for (int j = i + 1; j < message.Length; j++)
+                        var auxMessage = "<Underline>";
+                        var endingFound = false;
+                        for (var j = i + 1; j < message.Length; j++)
                         {
                             if (message[j] == '`' && j == message.Length - 1 && !endingFound)
                             {

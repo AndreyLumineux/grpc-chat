@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Data;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Windows.Threading;
 using ChatWPF.Commands;
 using ChatWPF.Models;
 using ChatWPF.Services;
-using Meziantou.Framework.WPF.Collections;
 
 namespace ChatWPF.ViewModels
 {
     public class ChatVM : BaseVM
     {
-        private readonly Operations _operations;
         private readonly object _lock = new();
 
         public ObservableCollection<string> Messages { get; } = new();
@@ -25,33 +17,44 @@ namespace ChatWPF.ViewModels
 
         public ChatVM()
         {
-            _operations = new Operations(this, MainVM._navigationStore);
-            var clientsList = _operations.GetAllClients();
+            Operations.CurrentContext = this;
+            _ = Operations.Instance.Connect();
+
+            var clientsList = Operations.Instance.GetAllClients();
+            foreach (var item in clientsList)
+            {
+                Clients.Add(item);
+            }
+
             InputBox = new Input();
         }
 
         private ICommand _sendPressed;
+
         public ICommand SendPressed
         {
             get
             {
                 if (_sendPressed == null)
                 {
-                    _sendPressed = new RelayCommand(async param => await _operations.Send(InputBox.InputMessage));
+                    _sendPressed = new RelayCommand(async param => await Operations.Instance.Send(InputBox.InputMessage));
                 }
+
                 return _sendPressed;
             }
         }
 
         private ICommand _sendVoid;
+
         public ICommand SendVoid
         {
             get
             {
                 if (_sendVoid == null)
                 {
-                    _sendVoid = new RelayCommand(_operations.SendVoid);
+                    _sendVoid = new RelayCommand(Operations.Instance.SendVoid);
                 }
+
                 return _sendVoid;
             }
         }
