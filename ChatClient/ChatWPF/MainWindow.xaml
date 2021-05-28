@@ -8,7 +8,8 @@
         xmlns:views="clr-namespace:ChatWPF.Views"
         mc:Ignorable="d"
         Title="Chat"
-        SizeToContent="WidthAndHeight">
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize">
 
     <Window.DataContext>
         <viewmodels:MainVM/>

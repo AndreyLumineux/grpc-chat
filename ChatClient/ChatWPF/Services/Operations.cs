@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Threading;
 using ChatLibrary.ServiceProvider;
 using ChatProtos;
 using ChatWPF.Stores;
@@ -15,18 +13,21 @@ namespace ChatWPF.Services
 {
     public class Operations
     {
-        private readonly NavigationStore _navigationStore;
-        private BaseVM _currentContext;
+        public static BaseVM CurrentContext;
+        public static Operations Instance => instance ??= new Operations(CurrentContext, NavigationStore);
+
+        private static NavigationStore NavigationStore;
         private static Message.MessageClient messageClient;
         private static Gateway.GatewayClient gatewayClient;
+        private static Operations instance;
 
         private IAsyncStreamReader<ServerToClientMessage> messagesResponseStream;
         private IAsyncStreamReader<GetClientsUpdateResponse> clientsUpdatesResponseStream;
 
         public Operations(BaseVM currentContext, NavigationStore navigationStore)
         {
-            _currentContext = currentContext;
-            _navigationStore = navigationStore;
+            CurrentContext = currentContext;
+            NavigationStore = navigationStore;
         }
 
         public async void Submit(object param)
@@ -40,14 +41,11 @@ namespace ChatWPF.Services
 
             var invalidCharacters = "/-?~`'\\\"|!@#$%^&*() ";
 
-            foreach (char character in invalidCharacters)
+            if (invalidCharacters.Any(character => HomeVM.ClientName.Contains(character)))
             {
-                if (HomeVM.ClientName.Contains(character))
-                {
-                    HomeVM.StatusLabel.LabelMessage = "Your name contains an invalid character!";
-                    HomeVM.StatusLabel.ForegroundColor = System.Windows.Media.Brushes.Red;
-                    return;
-                }
+                HomeVM.StatusLabel.LabelMessage = "Your name contains an invalid character!";
+                HomeVM.StatusLabel.ForegroundColor = System.Windows.Media.Brushes.Red;
+                return;
             }
 
             HomeVM.StatusLabel.LabelMessage = "Joining ...";
@@ -62,8 +60,12 @@ namespace ChatWPF.Services
                 return;
             }
 
-            _currentContext = new ChatVM();
-            _navigationStore.CurrentVM = _currentContext;
+            CurrentContext = new ChatVM();
+            NavigationStore.CurrentVM = CurrentContext;
+        }
+
+        public async Task Connect()
+        {
             Console.WriteLine("Successfully connected to server.");
 
             messageClient = GrpcServiceProvider.Instance.MessageClient;
@@ -80,15 +82,14 @@ namespace ChatWPF.Services
             await SendMessageToServer(line);
         }
 
-
         public void SendVoid(object obj)
         {
-            (_currentContext as ChatVM).Messages.Add("gfdahadfh");
+            (CurrentContext as ChatVM)?.Messages.Add("gfdahadfh");
         }
-
 
         private static async Task SendMessageToServer(string text)
         {
+            ((ChatVM)CurrentContext).InputBox.InputMessage = "";
             await messageClient.SendMessage()
                 .RequestStream.WriteAsync(new ClientToServerMessage
                 {
@@ -101,13 +102,15 @@ namespace ChatWPF.Services
 
         private async Task ListenToMessages()
         {
-            var currentContext = _currentContext as ChatVM;
+            var currentContext = CurrentContext as ChatVM;
+
             await foreach (var response in messagesResponseStream.ReadAllAsync())
             {
                 Console.WriteLine($"Received: {response.Name} -- {response.Text}");
+                var message = new Models.Message(response.Text);
                 try
                 {
-                    currentContext.Messages.Add($"Received: {response.Name} -- {response.Text}");
+                    currentContext?.Messages.Add($"<Bold>{response.Name}:</Bold> {message.OutputMessage}");
                 }
                 catch (Exception e)
                 {
@@ -119,17 +122,19 @@ namespace ChatWPF.Services
 
         private async Task ListenToClientsUpdates()
         {
+            var currentContext = CurrentContext as ChatVM;
+
             await foreach (var response in clientsUpdatesResponseStream.ReadAllAsync())
             {
                 if (response.Status == GetClientsUpdateResponse.Types.Status.Connected)
                 {
                     Console.WriteLine($"{response.Client} has connected.");
-                    ((ChatVM)_navigationStore.CurrentVM).Clients.AddClient(response.Client);
+                    currentContext?.Clients.Add(response.Client);
                 }
                 else
                 {
                     Console.WriteLine($"{response.Client} has disconnected.");
-                    ((ChatVM)_navigationStore.CurrentVM).Clients.RemoveClient(response.Client);
+                    currentContext?.Clients.Remove(response.Client);
                 }
             }
         }
