@@ -54,7 +54,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
-                    <Button Content="Send" Background="AntiqueWhite" Height="30" Margin="10,0" Command="{Binding SendVoid}" />
+                    <Button Content="Send" Background="AntiqueWhite" Height="30" Margin="10,0" Command="{Binding SendPressed}" />
                     <TextBox Width="550" Height="30"
 					         Text="{Binding InputBox.InputMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
