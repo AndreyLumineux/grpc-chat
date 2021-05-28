@@ -11,25 +11,22 @@ namespace ChatWPF.ViewModels
         private readonly object _lock = new();
 
         public ObservableCollection<string> Messages { get; } = new();
+        public ObservableCollection<string> Clients { get; } = new();
 
-        public ClientsList Clients { get; set; }
         public Input InputBox { get; set; }
 
         public ChatVM()
         {
             Operations.CurrentContext = this;
             _ = Operations.Instance.Connect();
+
             var clientsList = Operations.Instance.GetAllClients();
-
-            Clients = new ClientsList();
-
             foreach (var item in clientsList)
             {
-                Clients.AddClient(item);
+                Clients.Add(item);
             }
 
             InputBox = new Input();
-            Messages.Add("Yest");
         }
 
         private ICommand _sendPressed;

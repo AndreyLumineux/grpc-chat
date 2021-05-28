@@ -110,7 +110,7 @@ namespace ChatWPF.Services
                 var message = new Models.Message(response.Text);
                 try
                 {
-                    currentContext?.Messages.Add($"Received: {response.Name} -- {message.OutputMessage}");
+                    currentContext?.Messages.Add($"<Bold>{response.Name}:</Bold> {message.OutputMessage}");
                 }
                 catch (Exception e)
                 {
@@ -122,17 +122,19 @@ namespace ChatWPF.Services
 
         private async Task ListenToClientsUpdates()
         {
+            var currentContext = CurrentContext as ChatVM;
+
             await foreach (var response in clientsUpdatesResponseStream.ReadAllAsync())
             {
                 if (response.Status == GetClientsUpdateResponse.Types.Status.Connected)
                 {
                     Console.WriteLine($"{response.Client} has connected.");
-                    ((ChatVM)NavigationStore.CurrentVM).Clients.AddClient(response.Client);
+                    currentContext?.Clients.Add(response.Client);
                 }
                 else
                 {
                     Console.WriteLine($"{response.Client} has disconnected.");
-                    ((ChatVM)NavigationStore.CurrentVM).Clients.RemoveClient(response.Client);
+                    currentContext?.Clients.Remove(response.Client);
                 }
             }
         }
