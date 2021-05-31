@@ -29,7 +29,7 @@ namespace ChatWPF.Models
                     {
                         beginingFound = true;
                     }
-                    else if (message[i - 1] == ' ')
+                    else if (message[i - 1] == ' ' && message[i+1]!=' ')
                     {
                         beginingFound = true;
                     }
@@ -68,7 +68,7 @@ namespace ChatWPF.Models
                     {
                         beginingFound = true;
                     }
-                    else if (message[i - 1] == ' ')
+                    else if (message[i - 1] == ' ' && message[i + 1] != ' ')
                     {
                         beginingFound = true;
                     }
@@ -83,7 +83,7 @@ namespace ChatWPF.Models
                                 auxMessage = auxMessage + "</Italic>";
                                 endingFound = true;
                             }
-                            else if (message[j] == '_' && message[j + 1] == ' ' && !endingFound)
+                            else if ( message[j] == '_' && message[j + 1] == ' ' && !endingFound)
                             {
                                 auxMessage = auxMessage + "</Italic>";
                                 endingFound = true;
@@ -107,7 +107,7 @@ namespace ChatWPF.Models
                     {
                         beginingFound = true;
                     }
-                    else if (message[i - 1] == ' ')
+                    else if (message[i - 1] == ' ' && message[i + 1] != ' ')
                     {
                         beginingFound = true;
                     }
@@ -146,7 +146,7 @@ namespace ChatWPF.Models
                     {
                         beginingFound = true;
                     }
-                    else if (message[i - 1] == ' ')
+                    else if (message[i - 1] == ' ' && message[i + 1] != ' ')
                     {
                         beginingFound = true;
                     }
