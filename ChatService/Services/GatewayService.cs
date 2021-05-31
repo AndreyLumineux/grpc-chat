@@ -51,15 +51,15 @@ namespace ChatService
 				{
 					if (ClientsList.Contains(request.Name))
 					{
-						//TODO: use logger
-						Console.WriteLine("A user with this name is already connected.");
+
+							_logger.LogWarning("A user with this name is already connected.");
 						break;
 					}
 
 					await connectionService.Connect(new GatewayRequest {Name = request.Name}, context);
 					clientResponse.Status = ClientResponse.Types.Status.Success;
 					ClientsList.Add(request.Name);
-
+					_logger.LogInformation(request.Name + " has connected!");
 					await SendClientsUpdateResponses(GetClientsUpdateResponse.Types.Status.Connected, request.Name);
 
 					break;
@@ -69,7 +69,7 @@ namespace ChatService
 					await connectionService.Disconnect(new GatewayRequest {Name = request.Name}, context);
 					clientResponse.Status = ClientResponse.Types.Status.Success;
 					ClientsList.Remove(request.Name);
-
+					_logger.LogInformation(request.Name + "has disconnected!");
 					await SendClientsUpdateResponses(GetClientsUpdateResponse.Types.Status.Disconnected, request.Name);
 
 					break;

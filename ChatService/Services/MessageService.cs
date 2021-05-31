@@ -44,7 +44,7 @@ namespace ChatService.Services
 			while (await requestStream.MoveNext() && !context.CancellationToken.IsCancellationRequested)
 			{
 				var message = requestStream.Current;
-				Console.WriteLine($"Received: {message.Name}: {message.Text}");
+				_logger.LogInformation($"Received: {message.Name}: {message.Text}");
 
 				foreach (var responseStream in MessagesResponseStreams.ToList())
 				{
@@ -55,7 +55,7 @@ namespace ChatService.Services
 					catch (Exception)
 					{
 						MessagesResponseStreams.Remove(responseStream);
-						Console.WriteLine(" ***** Removed a response stream. *****");
+						_logger.LogInformation(" ***** Removed a response stream. *****");
 					}
 				}
 			}
