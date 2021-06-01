@@ -8,7 +8,7 @@ namespace ChatWPF.Models
 
         public string OutputMessage
         {
-            get { return _outputMessage; }
+            get => _outputMessage;
             set
             {
                 _outputMessage = value;
@@ -24,16 +24,16 @@ namespace ChatWPF.Models
             {
                 if (message[i] == '*')
                 {
-                    var beginingFound = false;
+                    var beginningFound = false;
                     if (i == 0)
                     {
-                        beginingFound = true;
+                        beginningFound = true;
                     }
-                    else if (message[i - 1] == ' ' && message[i+1]!=' ')
+                    else if (message[i - 1] == ' ' && message[i + 1] != ' ')
                     {
-                        beginingFound = true;
+                        beginningFound = true;
                     }
-                    if (beginingFound)
+                    if (beginningFound)
                     {
                         var auxMessage = "<Bold>";
                         var endingFound = false;
@@ -63,16 +63,16 @@ namespace ChatWPF.Models
                 }
                 else if (message[i] == '_')
                 {
-                    var beginingFound = false;
+                    var beginningFound = false;
                     if (i == 0)
                     {
-                        beginingFound = true;
+                        beginningFound = true;
                     }
                     else if (message[i - 1] == ' ' && message[i + 1] != ' ')
                     {
-                        beginingFound = true;
+                        beginningFound = true;
                     }
-                    if (beginingFound)
+                    if (beginningFound)
                     {
                         var auxMessage = "<Italic>";
                         var endingFound = false;
@@ -83,7 +83,7 @@ namespace ChatWPF.Models
                                 auxMessage = auxMessage + "</Italic>";
                                 endingFound = true;
                             }
-                            else if ( message[j] == '_' && message[j + 1] == ' ' && !endingFound)
+                            else if (message[j] == '_' && message[j + 1] == ' ' && !endingFound)
                             {
                                 auxMessage = auxMessage + "</Italic>";
                                 endingFound = true;
@@ -102,16 +102,16 @@ namespace ChatWPF.Models
                 }
                 else if (message[i] == '~')
                 {
-                    var beginingFound = false;
+                    var beginningFound = false;
                     if (i == 0)
                     {
-                        beginingFound = true;
+                        beginningFound = true;
                     }
                     else if (message[i - 1] == ' ' && message[i + 1] != ' ')
                     {
-                        beginingFound = true;
+                        beginningFound = true;
                     }
-                    if (beginingFound)
+                    if (beginningFound)
                     {
                         var auxMessage = "<Strikethrough>";
                         var endingFound = false;
@@ -141,16 +141,16 @@ namespace ChatWPF.Models
                 }
                 else if (message[i] == '`')
                 {
-                    var beginingFound = false;
+                    var beginningFound = false;
                     if (i == 0)
                     {
-                        beginingFound = true;
+                        beginningFound = true;
                     }
                     else if (message[i - 1] == ' ' && message[i + 1] != ' ')
                     {
-                        beginingFound = true;
+                        beginningFound = true;
                     }
-                    if (beginingFound)
+                    if (beginningFound)
                     {
                         var auxMessage = "<Underline>";
                         var endingFound = false;

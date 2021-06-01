@@ -8,8 +8,6 @@ namespace ChatWPF.ViewModels
 {
     public class ChatVM : BaseVM
     {
-        private readonly object _lock = new();
-
         public ObservableCollection<string> Messages { get; } = new();
         public ObservableCollection<string> Clients { get; } = new();
 
@@ -41,21 +39,6 @@ namespace ChatWPF.ViewModels
                 }
 
                 return _sendPressed;
-            }
-        }
-
-        private ICommand _sendVoid;
-
-        public ICommand SendVoid
-        {
-            get
-            {
-                if (_sendVoid == null)
-                {
-                    _sendVoid = new RelayCommand(Operations.Instance.SendVoid);
-                }
-
-                return _sendVoid;
             }
         }
     }

@@ -7,10 +7,7 @@ namespace ChatWPF.Models
         private string _labelMessage;
         public string LabelMessage
         {
-            get
-            {
-                return _labelMessage;
-            }
+            get => _labelMessage;
             set
             {
                 _labelMessage = value;

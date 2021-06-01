@@ -8,7 +8,7 @@ namespace ChatWPF.Models
 
         public string InputMessage
         {
-            get { return _inputMessage; }
+            get => _inputMessage;
             set
             {
                 _inputMessage = value;

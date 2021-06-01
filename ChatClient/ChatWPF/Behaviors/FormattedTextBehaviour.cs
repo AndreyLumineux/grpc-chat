@@ -26,18 +26,18 @@ namespace ChatWPF.Behaviors
         private static Inline Traverse(string value)
         {
             // Get the sections/inlines
-            string[] sections = SplitIntoSections(value);
+            var sections = SplitIntoSections(value);
 
             // Check for grouping
             if (sections.Length.Equals(1))
             {
-                string section = sections[0];
+                var section = sections[0];
 
                 // Check for token
                 if (GetTokenInfo(section, out var token, out var tokenStart, out var tokenEnd))
                 {
                     // Get the content to further examination
-                    string content = token.Length.Equals(tokenEnd - tokenStart) ?
+                    var content = token.Length.Equals(tokenEnd - tokenStart) ?
                         null :
                         section.Substring(token.Length, section.Length - 1 - token.Length * 2);
 
@@ -61,9 +61,9 @@ namespace ChatWPF.Behaviors
             }
             // Group together
 
-            Span span = new Span();
+            var span = new Span();
 
-            foreach (string section in sections)
+            foreach (var section in sections)
                 span.Inlines.Add(Traverse(section));
 
             return span;
@@ -76,7 +76,7 @@ namespace ChatWPF.Behaviors
             endIndex = -1;
 
             startIndex = value.IndexOf("<");
-            int startTokenEndIndex = value.IndexOf(">");
+            var startTokenEndIndex = value.IndexOf(">");
 
             // No token here
             if (startIndex < 0)
@@ -95,11 +95,11 @@ namespace ChatWPF.Behaviors
                 return true;
             }
 
-            string endToken = token.Insert(1, "/");
+            var endToken = token.Insert(1, "/");
 
             // Detect nesting;
-            int nesting = 0;
-            int pos = 0;
+            var nesting = 0;
+            var pos = 0;
             do
             {
                 var tempStartTokenIndex = value.IndexOf(token, pos);
@@ -131,16 +131,15 @@ namespace ChatWPF.Behaviors
 
             while (!string.IsNullOrEmpty(value))
             {
-
                 // Check if this is a token section
                 if (GetTokenInfo(value, out var token, out var tokenStartIndex, out var tokenEndIndex))
                 {
                     // Add pretext if the token isn't from the start
                     if (tokenStartIndex > 0)
-                        sections.Add(value.Substring(0, tokenStartIndex));
+                        sections.Add(value[..tokenStartIndex]);
 
                     sections.Add(value.Substring(tokenStartIndex, tokenEndIndex - tokenStartIndex));
-                    value = value.Substring(tokenEndIndex); // Trim away
+                    value = value[tokenEndIndex..]; // Trim away
                 }
                 else
                 { // No tokens, just add the text

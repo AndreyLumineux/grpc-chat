@@ -4,15 +4,15 @@ namespace ChatWPF.ViewModels
 {
     public class MainVM : BaseVM
     {
-        public static readonly NavigationStore _navigationStore = new();
+        public static readonly NavigationStore NavigationStore = new();
 
-        public BaseVM CurrentVM => _navigationStore.CurrentVM;
+        public BaseVM CurrentVM => NavigationStore.CurrentVM;
 
         public MainVM()
         {
-            _navigationStore.CurrentVM = new HomeVM();
+            NavigationStore.CurrentVM = new HomeVM();
 
-            _navigationStore.CurrentVMChanged += OnCurrentVMChanged;
+            NavigationStore.CurrentVMChanged += OnCurrentVMChanged;
         }
 
         private void OnCurrentVMChanged()
